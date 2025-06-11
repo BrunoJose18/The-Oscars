@@ -3,9 +3,11 @@ import sqlite3
 import customtkinter as ctk
 from tkinter import *
 from tkinter import messagebox
+from user_banco import *
 
 janela = ctk.CTk() 
-
+criar_conexao_usuario()
+criar_tabela_usuario()
 # Criando a janela principal
 class Application():
     def __init__(self):
@@ -44,11 +46,15 @@ class Application():
         label.place(x=25, y=5)
 
         #Caixa de texto para o usuário
-        username_entry = ctk.CTkEntry(master= login_frame, placeholder_text="Username", width=300, font=("Roboto", 14)).place(x=50, y=105)   
-        username_label = ctk.CTkLabel(master= login_frame, text="*O campo de usuário é de caratér obrigatório", text_color="green", font=("Roboto", 14)).place(x=50, y=135)
+        username_entry = ctk.CTkEntry(master= login_frame, placeholder_text="Username", width=300, font=("Roboto", 14))
+        username_entry.place(x=50, y=105)   
+        username_label = ctk.CTkLabel(master= login_frame, text="*O campo de usuário é de caratér obrigatório", text_color="green", font=("Roboto", 14))
+        username_label.place(x=50, y=135)
         #Caixa de texto para a senha
-        password_entry = ctk.CTkEntry(master= login_frame, placeholder_text="Password", width=300, font=("Roboto", 14), show="*").place(x=50, y=165)
-        password_label = ctk.CTkLabel(master= login_frame, text="*O campo de senha é de caratér obrigatório", text_color="green", font=("Roboto", 14)).place(x=50, y=195)
+        password_entry = ctk.CTkEntry(master= login_frame, placeholder_text="Password", width=300, font=("Roboto", 14), show="*")
+        password_entry.place(x=50, y=165)
+        password_label = ctk.CTkLabel(master= login_frame, text="*O campo de senha é de caratér obrigatório", text_color="green", font=("Roboto", 14))
+        password_label.place(x=50, y=195)
         senha_visivel = False
         def alternar_senha():
             global senha_visivel
@@ -68,15 +74,26 @@ class Application():
         #checkbox para lembrar o usuário
         checkbox = ctk.CTkCheckBox(master= login_frame, text="Lembrar-se de mim", font=("Roboto", 16)).place(x=50, y=225)
 
-        def login():
+        def login(username_entry,password_entry):
             # Aqui você pode adicionar a lógica de autenticação do usuário
+            conexao = criar_conexao_usuario()
+            cursor = conexao.cursor()
+            cursor.execute('''SELECT * FROM Usuarios WHERE email = ? AND senha = ?''', (username_entry, password_entry))
+            result = cursor.fetchone()
             # Exemplo de mensagem de sucesso
-                msg = messagebox.showinfo(title="Login", message="Login realizado com sucesso!")
+            msg = messagebox.showinfo(title="Login", message="Login realizado com sucesso!")
                 
             # Aqui você pode adicionar a lógica para verificar o usuário e senha
-                pass
+            if result:
+                print("Login realizado!")
+                return True
+            else:
+                print("Email ou senha incorreta. Tente novamente.")
+                return False
+            cursor.close()
+            conexao.close()
 
-        login_button = ctk.CTkButton(master= login_frame, text="Login", width=300, fg_color="#396581", command=login).place(x=50, y=260)
+        login_button = ctk.CTkButton(master= login_frame, text="Login", width=300, fg_color="#396581", command=lambda: login(username_entry.get(), password_entry.get())).place(x=50, y=260)
         
         # Função para abrir a tela de registro
         def tela_register():
@@ -91,13 +108,14 @@ class Application():
             label.place(x=25, y=5)
 
             #Criando os campos de entrada de dados
-            username2_entry = ctk.CTkEntry(master= rg_frame, placeholder_text="Username", width=300, font=("Roboto", 15)).place(x=50, y=95)
-
-            email_entry = ctk.CTkEntry(master= rg_frame, placeholder_text="Email", width=300, font=("Roboto", 15), ).place(x=50, y=135)
-
-            password2_entry = ctk.CTkEntry(master= rg_frame, placeholder_text="Password", width=300, font=("Roboto", 15), show= "*").place(x=50, y=175)
-
-            cPass_entry = ctk.CTkEntry(master= rg_frame, placeholder_text="Confirm password", width=300, font=("Roboto", 15), show= "*").place(x=50, y=215)
+            username2_entry = ctk.CTkEntry(master=rg_frame, placeholder_text="Username", width=300, font=("Roboto", 15))
+            username2_entry.place(x=50, y=95)
+            email_entry = ctk.CTkEntry(master=rg_frame, placeholder_text="Email", width=300, font=("Roboto", 15))
+            email_entry.place(x=50, y=135)
+            password2_entry = ctk.CTkEntry(master=rg_frame, placeholder_text="Password", width=300, font=("Roboto", 15), show="*")
+            password2_entry.place(x=50, y=175)
+            cPass_entry = ctk.CTkEntry(master=rg_frame, placeholder_text="Confirm password", width=300, font=("Roboto", 15), show="*")
+            cPass_entry.place(x=50, y=215)
 
             checkbox = ctk.CTkCheckBox(master= rg_frame, text="Aceitos todos os termos e políticas", font=("Roboto", 16)).place(x=50, y=255)
             # Função para voltar para a tela de login
@@ -110,13 +128,23 @@ class Application():
 
             back_button = ctk.CTkButton(master= rg_frame, text="Voltar", width=125, fg_color="#838282", hover_color="#4D4C4C", command=back).place(x=50, y=300)
             # Função para salvar o usuário
-            def save_user():
+            def save_user(username2_entry, email_entry, cPass_entry):
                 # Exemplo de mensagem de sucesso
                 msg = messagebox.showinfo(title="Cadastro", message="Usuário cadastrado com sucesso!",)
                 # Aqui você pode adicionar a lógica para salvar o usuário no banco de dados
+                conexao = criar_conexao_usuario()
+                cursor = conexao.cursor()
+                if username2_entry and email_entry and cPass_entry:
+                    cursor.execute('''INSERT INTO Usuarios (nome, email, senha) VALUES (?, ?, ?)''', (username2_entry, email_entry, cPass_entry))
+                    conexao.commit()
+                    return cursor.lastrowid
+                else:
+                    print("Algo deu errado.")
+                cursor.close()
+                conexao.close()
 
             # Botão para salvar o usuário
-            save_button = ctk.CTkButton(master= rg_frame, text="CADASTRAR", width=170, fg_color="#0B8800", hover_color= "#123A00", command=save_user).place(x=180, y=300)
+            save_button = ctk.CTkButton(master= rg_frame, text="CADASTRAR", width=170, fg_color="#0B8800", hover_color= "#123A00", command=lambda: save_user(username2_entry.get(), email_entry.get(), password2_entry.get())).place(x=180, y=300)
             # Botão para abrir a tela de registro
             
         register_span = ctk.CTkLabel(master= login_frame, text="Não tem uma conta? ", font=("Roboto", 15), text_color="#FFFFFF").place(x=50, y=305)

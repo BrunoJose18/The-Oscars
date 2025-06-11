@@ -19,6 +19,7 @@ class Application():
         self.janela.resizable(False, False)
         self.janela.geometry("1200x700")
         self.janela.title("The Oscars - Mapa")
+        self.janela.iconbitmap("oscares.ico")
 
     def combobox_callback(self, choice):
         print("Selecionado:", choice)
