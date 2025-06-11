@@ -1,51 +1,5 @@
 import sqlite3 as con
-import pandas as pd
-     
-
-caminho_csv = 'oscar.csv'
-     
-
-df = pd.read_csv(caminho_csv)
-     
-
-df.rename(columns={
-    'name': 'nome',
-    'birth_year': 'ano_nasc',
-    'birth_date': 'data_nasc',
-    'birthplace': 'local_nasc',
-    'race_ethnicity': 'raca_etnia',
-    'religion': 'religiao',
-    'sexual_orientation': 'orientacao_sexual',
-    'year_edition': 'ano_edicao',
-    'category': 'categoria',
-    'movie': 'filme'
-}, inplace=True)
-     
-
-conexao = con.connect('bd_oscar')
-cursor = conexao.cursor()
-     
-
-cursor.execute ('''CREATE TABLE IF NOT EXISTS Oscar (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nome TEXT,
-                    ano_nasc INTEGER,
-                    data_nasc TEXT,
-                    local_nasc TEXT,
-                    raca_etnia TEXT,
-                    religiao TEXT,
-                    orientacao_sexual TEXT,
-                    ano_edicao INTEGER,
-                    categoria TEXT,
-                    filme TEXT)''')
-     
-
-
-df.to_sql('Oscar', conexao, if_exists='append', index=False)
-     
-
 #CRUD
-
 def coletar_dados_ator():
     perguntas = {
         "nome": "Digite o nome do(a) Ator/Atriz: ",
@@ -56,7 +10,7 @@ def coletar_dados_ator():
         "religiao": "Digite a religião do(a) Ator/Atriz: ",
         "orientacao_sexual": "Digite a orientação sexual do(a) Ator/Atriz: ",
         "ano_edicao": "Digite o ano de edição do filme: ",
-        "categoria": "Digite a categoria do filme: ",
+        "categoria": "Digite a categoria do Oscar: ",
         "filme": "Digite o nome do filme: "
     }
 
@@ -70,6 +24,8 @@ def coletar_dados_ator():
     return respostas
 
 def inserir_info_ator_oscar(dados):
+    conexao = con.connect("bd_oscar")
+    cursor = conexao.cursor()
     cursor.execute('''INSERT INTO Oscar
         (nome, ano_nasc, data_nasc, local_nasc, raca_etnia, religiao,
          orientacao_sexual, ano_edicao, categoria, filme)
@@ -80,6 +36,8 @@ def inserir_info_ator_oscar(dados):
             dados["ano_edicao"], dados["categoria"], dados["filme"]
         ))
     conexao.commit()
+    conexao.close()
+    
     return cursor.lastrowid
 
      
@@ -91,6 +49,8 @@ def inserir_info_ator_oscar(dados):
      
 
 def pesquisa_ator_por_id(ator_id):
+  conexao = con.connect("bd_oscar")
+  cursor = conexao.cursor()
   cursor.execute('''SELECT * FROM Oscar WHERE id = ?''',
                    (ator_id,))
 
@@ -108,10 +68,11 @@ def pesquisa_ator_por_id(ator_id):
       Religiao: {result[6]}\n
       Oritentação Sexual: {result[7]}\n
       Ano de edição do filme: {result[8]}\n
-      Categoria do filme: {result[9]}\n
+      Categoria do Oscar: {result[9]}\n
       Nome do filme: {result[10]}""")
   else:
       print("Usuario nao encontrado.")
+  conexao.close()
      
 
 #Teste de pesquisa por id
@@ -120,6 +81,8 @@ def pesquisa_ator_por_id(ator_id):
      
 
 def pesquisa_ator_por_nome(nome):
+  conexao = con.connect("bd_oscar")
+  cursor = conexao.cursor()
   cursor.execute('''SELECT * FROM Oscar WHERE nome LIKE  ?''', ('%' + nome + '%',))
   result = cursor.fetchall()
   print(f"Busca por nome: '{nome}'")
@@ -135,12 +98,13 @@ Raça/Etnia: {linha[5]}
 Religião: {linha[6]}
 Orientação Sexual: {linha[7]}
 Ano de edição do filme: {linha[8]}
-Categoria do filme: {linha[9]}
+Categoria do Oscar: {linha[9]}
 Nome do filme: {linha[10]}
 """)
             print("-" * 40)
   else:
     print("Ator/atriz não encontrado(a).")
+  conexao.close()
      
 
 #Teste de pesquisa por nome
@@ -159,7 +123,7 @@ def dados_atualizado_ator():
         "religiao": "Digite a religião do(a) Ator/Atriz: ",
         "orientacao_sexual": "Digite a orientação sexual do(a) Ator/Atriz: ",
         "ano_edicao": "Digite o ano de edição do filme: ",
-        "categoria": "Digite a categoria do filme: ",
+        "categoria": "Digite a categoria do Oscar: ",
         "filme": "Digite o nome do filme: "
     }
 
@@ -172,6 +136,8 @@ def dados_atualizado_ator():
     return respostas
 
 def atualizar_ator(dados_atualizado):
+    conexao = con.connect("bd_oscar")
+    cursor = conexao.cursor()
     cursor.execute('''
         UPDATE Oscar
         SET nome = ?, ano_nasc = ?, data_nasc = ?, local_nasc = ?, raca_etnia = ?, religiao = ?, orientacao_sexual = ?, ano_edicao = ?, categoria = ?, filme = ?
@@ -183,6 +149,7 @@ def atualizar_ator(dados_atualizado):
         ))
     conexao.commit()
     return cursor.rowcount
+    conexao.close()
      
 
 #Teste de atualização de dados
@@ -195,9 +162,12 @@ def atualizar_ator(dados_atualizado):
      
 
 def remover_ator(ator_id):
+  conexao = con.connect("bd_oscar")
+  cursor = conexao.cursor()
   cursor.execute('''DELETE FROM Oscar WHERE id = ?''', (ator_id,))
   conexao.commit()
   return cursor.rowcount
+  conexao.close()
      
 
 #Teste de remoção de ator/atriz
