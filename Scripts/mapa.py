@@ -19,7 +19,7 @@ class Application():
         self.janela.resizable(False, False)
         self.janela.geometry("1200x700")
         self.janela.title("The Oscars - Mapa")
-        self.janela.iconbitmap("oscares.ico")
+        self.janela.iconbitmap("Src/oscares.ico")
 
     def combobox_callback(self, choice):
         print("Selecionado:", choice)
@@ -51,7 +51,7 @@ class Application():
 
     def mostrar_mapa(self):
       try:
-          self.imagem_original = Image.open("mapamundi.jpg").resize((700, 448))
+          self.imagem_original = Image.open("Src/mapamundi.jpg").resize((700, 448))
           self.tk_image = ImageTk.PhotoImage(self.imagem_original)
 
           self.canvas = tk.Canvas(self.janela, width=700, height=448, bg="black", highlightthickness=0)

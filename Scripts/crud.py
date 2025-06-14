@@ -1,5 +1,7 @@
 import sqlite3 as con
 #CRUD
+
+#Armazenando as respostas de cada pergunta
 def coletar_dados_ator():
     perguntas = {
         "nome": "Digite o nome do(a) Ator/Atriz: ",
@@ -23,6 +25,8 @@ def coletar_dados_ator():
 
     return respostas
 
+
+#Utilizando as respostas da função anterior para inserir os dados no banco de dados
 def inserir_info_ator_oscar(dados):
     conexao = con.connect("bd_oscar")
     cursor = conexao.cursor()
@@ -48,6 +52,7 @@ def inserir_info_ator_oscar(dados):
 #print(f"Ator/Atriz adicionado(a) com ID: {ator_id}")
      
 
+#Pesquisando pelo ID que a própria tabela cria automaticamente e retorna todas as informações associadas ao ID
 def pesquisa_ator_por_id(ator_id):
   conexao = con.connect("bd_oscar")
   cursor = conexao.cursor()
@@ -80,6 +85,7 @@ def pesquisa_ator_por_id(ator_id):
 #pesquisa_ator_por_id(ator_id)
      
 
+#Pesquisa por meio do nome do Ator/Atriz que retorna todas as suas informações
 def pesquisa_ator_por_nome(nome):
   conexao = con.connect("bd_oscar")
   cursor = conexao.cursor()
@@ -112,6 +118,7 @@ Nome do filme: {linha[10]}
 #pesquisa_ator_por_nome(nome)
      
 
+#Armazenando os novos dados a serem inseridos num Ator/Atriz existente
 def dados_atualizado_ator():
     perguntas = {
         "ator_id" : "Digite o ID do(a) ator/atriz a ser atualizado: ",
@@ -135,6 +142,7 @@ def dados_atualizado_ator():
 
     return respostas
 
+#Atualizando os dados por meio da função anterior
 def atualizar_ator(dados_atualizado):
     conexao = con.connect("bd_oscar")
     cursor = conexao.cursor()
@@ -161,6 +169,7 @@ def atualizar_ator(dados_atualizado):
 #    print(f"Nenhum usuario encontrado com ID {dados_atualizado['ator_id']}.")
      
 
+#Remove do banco de dados todos os registros associados ao ID inserido
 def remover_ator(ator_id):
   conexao = con.connect("bd_oscar")
   cursor = conexao.cursor()

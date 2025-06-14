@@ -1,9 +1,11 @@
 import sqlite3
 import pandas as pd
 
+#Função para se conectar ao banco
 def criar_conexao(nome_banco='bd_oscar'):
     return sqlite3.connect(nome_banco)
 
+#Carregando as informações do CSV, criando uma tabela e adicionando nela os dados do CSV
 def carregar_csv_e_criar_tabela(caminho_csv='oscar.csv'):
     df = pd.read_csv(caminho_csv)
 
