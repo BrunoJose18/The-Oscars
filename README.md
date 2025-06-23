@@ -1,8 +1,15 @@
 ## 📦 Plataforma Oscar — CRUD e Visualização do Mapa-Múndi
+
 Este repositório contém scripts para gerenciar dados de atores e atrizes vencedores do Oscar, 
 além de uma interface gráfica para visualizar um mapa-múndi interativo com filtros por categoria e continente. 
 O sistema utiliza um banco de dados SQLite para armazenar informações sobre filmes e premiações, permitindo operações de CRUD (Criar, Ler, Atualizar e Deletar) e consultas avançadas.
 
+### Projeto realizado pelos seguintes alunos dos cursos de T.I da Unifavip Wyden:
+
+*  Bruno José Barboza - 202408755813
+*  Italo Soares Santos - 202408162073
+*  João Luiz Pereira Filho - 202402973614
+*  Arthur Batista Braga - 202403124386
 
 ## SEÇÃO 1 (ARQUIVOS DOS BANCOS DE DADOS):
 
